@@ -229,7 +229,7 @@
                     (-?>> src
                           collect-imports
                           (map import-node-to-table)
-                          (map |(put $ :_found-in fp))))))
+                          (map |(when $ (put $ :_found-in fp)))))))
   #
   (def grouped
     (group-by |(get $ :_import-path) tables))
