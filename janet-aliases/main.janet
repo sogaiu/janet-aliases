@@ -78,11 +78,18 @@
 
 (defn collect-imports
   [src]
-  (collect (-> (l/ast src)
-               j/zip-down)
-           |(match (j/node $)
-              [:tuple _ [:symbol _ "import"]]
-              true)))
+  (def ast
+    (try
+      (l/ast src)
+      ([e]
+        (eprintf "error parsing: %p" e)
+        nil)))
+  (when ast
+    (collect (-> ast
+                 j/zip-down)
+             |(match (j/node $)
+                [:tuple _ [:symbol _ "import"]]
+                true))))
 
 (comment
 
@@ -225,11 +232,14 @@
   (each fp file-paths
     (def src (slurp fp))
     (when (not (empty? src))
-      (array/concat tables
-                    (-?>> src
-                          collect-imports
-                          (map import-node-to-table)
-                          (map |(when $ (put $ :_found-in fp)))))))
+      (def imports
+        (collect-imports src))
+      (if-not imports
+        (eprintf "no imports for: %p" fp)
+        (array/concat tables
+                      (->> imports
+                           (map import-node-to-table)
+                           (map |(when $ (put $ :_found-in fp))))))))
   #
   (def grouped
     (group-by |(get $ :_import-path) tables))
