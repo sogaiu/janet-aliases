@@ -236,10 +236,17 @@
         (collect-imports src))
       (if-not imports
         (eprintf "no imports for: %p" fp)
-        (array/concat tables
-                      (->> imports
-                           (map import-node-to-table)
-                           (map |(when $ (put $ :_found-in fp))))))))
+        (let [i-tables
+              (map |(try
+                      (import-node-to-table $)
+                      ([e]
+                        (eprintf "problem processing:\n  %p" fp)
+                        (eprintf "  error converting to table:\n    %p" e)
+                        @{}))
+                   imports)]
+          (array/concat tables
+                        (map |(when $ (put $ :_found-in fp))
+                             i-tables))))))
   #
   (def grouped
     (group-by |(get $ :_import-path) tables))
