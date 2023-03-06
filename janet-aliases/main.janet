@@ -1,7 +1,7 @@
 (import ./location :as l)
 (import ./zipper :as j)
 (import ./loc-jipper :as j)
-(import ./vendor/walk-dir :as wd)
+(import ./walk-dir :as wd)
 
 (defn collect
   [zloc pred]

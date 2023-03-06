@@ -1,4 +1,24 @@
-(import ./path)
+(def sep
+  (if (= :windows (os/which))
+    "\\"
+    "/"))
+
+(defn path-join
+  [left right &opt sepa]
+  (default sepa sep)
+  (string left sepa right))
+
+(comment
+
+  (path-join "/tmp" "test.txt" "/")
+  # =>
+  "/tmp/test.txt"
+
+  (path-join "C:\\windows" "system32" "\\")
+  # =>
+  "C:\\windows\\system32"
+
+  )
 
 (defn is-dir?
   [path]
@@ -28,16 +48,20 @@
 
 (comment
 
-  (is-file? (path/join (os/getenv "HOME") ".bashrc"))
-  # =>
-  true
-
   (is-file? (or (os/getenv "HOME")
                 (os/getenv "USERPROFILE")))
   # =>
   false
 
-  (is-file? (path/join (os/getenv "HOME") ".config/nvim/init.vim"))
+  (let [name (string (gensym))]
+    (if (os/stat name)
+      true
+      (do
+        (spit name "hello")
+        (def res
+          (is-file? name))
+        (os/rm name)
+        res)))
   # =>
   true
 
@@ -55,7 +79,7 @@
   (when (is-dir? path)
     (each thing (os/dir path)
       (def thing-path
-        (path/join path thing))
+        (path-join path thing))
       (cond
         (and (is-file? thing-path)
              (a-fn thing-path))
@@ -87,7 +111,7 @@
   (when (is-dir? path)
     (each thing (os/dir path)
       (def thing-path
-        (path/join path thing))
+        (path-join path thing))
       (when (is-dir? thing-path)
         (when (a-fn thing-path)
           (array/push acc thing-path))
@@ -98,7 +122,7 @@
 
   (def acc @[])
 
-  (just-dirs (path/join (os/getenv "HOME")
+  (just-dirs (path-join (os/getenv "HOME")
                         "/.config")
              acc)
 
@@ -114,7 +138,7 @@
   (when (is-dir? path)
     (each thing (os/dir path)
       (def thing-path
-        (path/join path thing))
+        (path-join path thing))
       (cond
         (is-file? thing-path)
         (a-fn thing-path)
@@ -124,7 +148,7 @@
 
 (comment
 
-  (visit-files (path/join (os/getenv "HOME")
+  (visit-files (path-join (os/getenv "HOME")
                           ".config")
                |(eprint $))
 
@@ -140,14 +164,14 @@
   (when (is-dir? path)
     (each thing (os/dir path)
       (def thing-path
-        (path/join path thing))
+        (path-join path thing))
       (when (is-dir? thing-path)
         (a-fn thing-path)
         (visit-dirs thing-path a-fn)))))
 
 (comment
 
-  (visit-dirs (path/join (os/getenv "HOME")
+  (visit-dirs (path-join (os/getenv "HOME")
                          ".config")
               |(eprint $))
 
@@ -163,7 +187,7 @@
   (when (is-dir? path)
     (each thing (os/dir path)
       (def thing-path
-        (path/join path thing))
+        (path-join path thing))
       (when (or (is-file? thing-path)
                 (is-dir? thing-path))
         (a-fn thing-path))
@@ -172,7 +196,7 @@
 
 (comment
 
-  (visit (path/join (os/getenv "HOME")
+  (visit (path-join (os/getenv "HOME")
                     ".config")
          |(eprint $))
 
