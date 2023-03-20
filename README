@@ -1,3 +1,7 @@
+what
+
+  output alias names in source and where they are used
+
 setup and sample invocation
 
   git clone https://github.com/sogaiu/janet-aliases
@@ -7,22 +11,22 @@ setup and sample invocation
 sample output
 
   ./loc-jipper
-    "j" "janet-usages-as-tests/janet-usages-as-tests/to-test.janet"
-    "j" "janet-aliases/main.janet"
+    "j" "./janet-usages-as-tests/to-test.janet"
+    "j" "./janet-aliases/main.janet"
 
   ./location
-    "l" "janet-usages-as-tests/janet-usages-as-tests/to-test.janet"
-    "l" "janet-usages-as-tests/janet-usages-as-tests/loc-jipper.janet"
-    "l" "janet-aliases/main.janet"
-    "l" "janet-aliases/loc-jipper.janet"
+    "l" "./janet-usages-as-tests/to-test.janet"
+    "l" "./janet-usages-as-tests/loc-jipper.janet"
+    "l" "./janet-aliases/main.janet"
+    "l" "./janet-aliases/loc-jipper.janet"
 
   ./zip-support
-    "s" "janet-usages-as-tests/janet-usages-as-tests/zipper.janet"
-    "s" "janet-aliases/zipper.janet"
+    "s" "./janet-usages-as-tests/zipper.janet"
+    "s" "./janet-aliases/zipper.janet"
 
   ./zipper
-    "j" "janet-usages-as-tests/janet-usages-as-tests/to-test.janet"
-    "j" "janet-aliases/main.janet"
-    "z" "janet-usages-as-tests/janet-usages-as-tests/loc-jipper.janet"
-    "z" "janet-aliases/loc-jipper.janet"
+    "j" "./janet-usages-as-tests/to-test.janet"
+    "j" "./janet-aliases/main.janet"
+    "z" "./janet-aliases/loc-jipper.janet"
+    "z" "./janet-usages-as-tests/loc-jipper.janet"
 
