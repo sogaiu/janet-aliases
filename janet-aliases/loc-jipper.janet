@@ -93,7 +93,7 @@
 
 (comment
 
-  (type (import ./location :as l))
+  (type (import ./janet-peg/janet-peg/location :as l))
   # =>
   :table
 
@@ -121,7 +121,7 @@
 
 (comment
 
-  #(import ./location :as l)
+  #(import ./janet-peg/janet-peg/location :as l)
 
   (-> (l/ast "(+ 1 3)")
       zip-down
@@ -218,7 +218,7 @@
 
 (comment
 
-  #(import ./location :as l)
+  #(import ./janet-peg/janet-peg/location :as l)
 
   (-> (l/ast
         ``
@@ -256,7 +256,7 @@
 
 (comment
 
-  #(import ./location :as l)
+  #(import ./janet-peg/janet-peg/location :as l)
 
   (-> (l/ast
         ``
@@ -319,7 +319,7 @@
 
 (comment
 
-  #(import ./location :as l)
+  #(import ./janet-peg/janet-peg/location :as l)
 
   (-> (l/ast
         ``
