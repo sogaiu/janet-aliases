@@ -1,5 +1,5 @@
 (import ./location :as l)
-(import ./zipper :as j)
+(import ./janet-zipper/janet-zipper/zipper :as j)
 (import ./loc-jipper :as j)
 (import ./walk-dir :as wd)
 

@@ -1,4 +1,4 @@
-(import ./zipper :as z)
+(import ./janet-zipper/janet-zipper/zipper :as z)
 
 (defn has-children?
   ``
