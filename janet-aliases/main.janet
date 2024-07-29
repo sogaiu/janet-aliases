@@ -1,6 +1,6 @@
 (import ./janet-peg/janet-peg/location :as l)
 (import ./janet-zipper/janet-zipper/zipper :as j)
-(import ./loc-jipper :as j)
+(import ./janet-location-zipper/loc-jipper :as j)
 (import ./janet-walk-dir/walk-dir :as wd)
 
 (defn collect
