@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/sogaiu/janet-walk-dir
 	branch = master
-	commit = dff1143cd9fa5eb2143b4a3551e06fcacd032f6e
-	parent = accb1423cd3590f6d188110d7b07aee5eb160aa0
+	commit = 0d75704ac7c2259af24217a6cc9ddd3f1e40099b
+	parent = d51b259494f2ae1379f2b198755f280c46249856
 	method = merge
 	cmdver = 0.4.9

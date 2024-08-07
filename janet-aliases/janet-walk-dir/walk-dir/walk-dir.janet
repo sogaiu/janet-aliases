@@ -54,9 +54,19 @@
   )
 
 (defn is-dir?
-  [path]
+  ``
+  Returns true if `path` is a directory.  Otherwise, returns false.
+
+  If optional argument `symlink` is true, return true for symlinks
+  that resolve to directories.  The default value for `symlink`
+  is false.
+  ``
+  [path &opt symlink]
+  (default symlink false)
   (when-let [path path
-             stat (os/lstat path)]
+             stat (if symlink
+                    (os/stat path)
+                    (os/lstat path))]
     (= :directory (stat :mode))))
 
 (comment
@@ -72,11 +82,18 @@
   ``
   Returns true if `path` is an ordinary file (e.g. not a directory).
   Otherwise, returns false.
+
+  If optional argument `symlink` is true, return true for symlinks
+  that resolve to directories.  The default value for `symlink`
+  is false.
   ``
-  [path]
+  [path &opt symlink]
+  (default symlink false)
   (truthy?
     (when-let [path path
-               mode-stat (os/lstat path :mode)]
+               mode-stat (if symlink
+                           (os/stat path)
+                           (os/lstat path :mode))]
       (= :file mode-stat))))
 
 (comment
@@ -127,7 +144,7 @@
   (def acc @[])
 
   (just-files (string (os/getenv "HOME")
-                      "/.config")
+                      ".config")
               acc)
 
   )
@@ -156,7 +173,7 @@
   (def acc @[])
 
   (just-dirs (path-join (os/getenv "HOME")
-                        "/.config")
+                        ".config")
              acc)
 
  )
@@ -169,8 +186,7 @@
   [path a-fn]
   (when (is-dir? path)
     (each thing (os/dir path)
-      (def thing-path
-        (path-join path thing))
+      (def thing-path (path-join path thing))
       (cond
         (is-file? thing-path)
         (a-fn thing-path)
@@ -194,8 +210,7 @@
   [path a-fn]
   (when (is-dir? path)
     (each thing (os/dir path)
-      (def thing-path
-        (path-join path thing))
+      (def thing-path (path-join path thing))
       (when (is-dir? thing-path)
         (a-fn thing-path)
         (visit-dirs thing-path a-fn)))))
@@ -216,8 +231,7 @@
   [path a-fn]
   (when (is-dir? path)
     (each thing (os/dir path)
-      (def thing-path
-        (path-join path thing))
+      (def thing-path (path-join path thing))
       (when (or (is-file? thing-path)
                 (is-dir? thing-path))
         (a-fn thing-path))
@@ -231,3 +245,4 @@
          |(eprint $))
 
  )
+
