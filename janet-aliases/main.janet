@@ -19,13 +19,11 @@
 (comment
 
   (def src
-    ``
-    (import ./location :as l)
-
-    (def a 1)
-
-    (import ./zipper :as z)
-    ``)
+    (string "(import ./location :as l)\n"
+            "\n"
+            "(def a 1)\n"
+            "\n"
+            "(import ./zipper :as z)"))
 
   (collect (-> (l/ast src)
                j/zip-down)
@@ -94,13 +92,11 @@
 (comment
 
   (def src
-    ``
-    (import ./location :as l)
-
-    (def a 1)
-
-    (import ./zipper :as z)
-    ``)
+    (string "(import ./location :as l)\n"
+            "\n"
+            "(def a 1)\n"
+            "\n"
+            "(import ./zipper :as z)"))
 
   (collect-imports src)
   # =>
@@ -272,11 +268,9 @@
 (comment
 
   (def src
-    ``
-    (import ./file-handling)
-
-    (import freja/file-handling :as fh)
-    ``)
+    (string `(import ./file-handling)` "\n"
+            "\n"
+            `(import freja/file-handling :as fh)`))
 
   # project root
   (def pr
