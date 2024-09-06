@@ -49,9 +49,7 @@
              (:symbol @{:bc 22 :bl 5 :ec 23 :el 5} "z"))]
 
   (def src
-    ``
-    (import freja/default-hotkeys :prefix "" :export true)
-    ``)
+    `(import freja/default-hotkeys :prefix "" :export true)`)
 
   (collect (-> (l/ast src)
                j/zip-down)
