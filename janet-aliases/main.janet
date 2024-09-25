@@ -274,6 +274,7 @@
   (def pr
     "/home/user/src/freja")
 
+  # XXX: note that JANET_PATH can now contain multiple dirs
   # JANET_PATH
   (def jp
     "/home/user/.local/lib/janet")
