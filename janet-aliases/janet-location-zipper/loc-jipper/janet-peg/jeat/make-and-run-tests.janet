@@ -6,7 +6,7 @@
   ".janet")
 
 (def test-file-ext
-  ".juat")
+  ".jeat")
 
 (defn make-execute-command
   [filepath]
@@ -183,33 +183,58 @@
 
   )
 
+########################################################################
+
 (defn main
-  [& args]
+  [& argv]
+  (def includes (array/slice argv 1))
+  (def excludes @[])
+  #
+  (def conf
+    (when-let [require-name
+               # these paths relative to project root (via jpm test)
+               (cond
+                 (os/stat ".jeat.janet")
+                 ".jeat"
+                 #
+                 (= :directory (os/stat ".jeat" :mode))
+                 ".jeat")]
+      # this path relative to a subdir of project root (via jpm test)
+      (def require-path
+        (string "../" require-name))
+      (def conf-env
+        (try
+          (require (string require-path))
+          ([e]
+            (error e))))
+      ((get-in conf-env ['init :value]))))
+  (when conf
+    (when-let [target-spec (get conf :jeat-target-spec)]
+      (array/push includes ;target-spec))
+    (when-let [exclude-spec (get conf :jeat-exclude-spec)]
+      (array/push excludes ;exclude-spec)))
+  #
   (def src-filepaths @[])
-  # collect file and directory paths from args
-  (each thing (slice args 1)
-    (def apath
-      (clean-end-of-path thing sep))
-    (def stat
-      (os/stat apath :mode))
+  # collect file and directory paths
+  (each thing includes
+    (def apath (clean-end-of-path thing sep))
+    (def mode (os/stat apath :mode))
     # XXX: should :link be supported?
     (cond
-      (= :file stat)
-      (if (string/has-suffix? file-ext apath)
-        (array/push src-filepaths apath)
-        (do
-          (eprintf "File does not have extension: %p" file-ext)
-          (os/exit 1)))
+      (= :file mode)
+      (array/push src-filepaths apath)
       #
-      (= :directory stat)
+      (= :directory mode)
       (array/concat src-filepaths (find-files-with-ext apath file-ext))
       #
       (do
-        (eprintf "Not an ordinary file or directory: %p" apath)
+        (eprintf "No such file or not an ordinary file or directory: %s"
+                 apath)
         (os/exit 1))))
   # generate tests, run tests, and report
   (each path src-filepaths
-    (when (= :file (os/stat path :mode))
+    (when (and (not (has-value? excludes path))
+               (= :file (os/stat path :mode)))
       (print path)
       (def result (make-run-report path))
       (cond
