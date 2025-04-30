@@ -84,8 +84,7 @@
   Otherwise, returns false.
 
   If optional argument `symlink` is true, return true for symlinks
-  that resolve to directories.  The default value for `symlink`
-  is false.
+  that resolve to files.  The default value for `symlink` is false.
   ``
   [path &opt symlink]
   (default symlink false)
@@ -120,13 +119,20 @@
 (defn just-files
   ``
   Recursively visit directory tree starting at `path`, accumulating
-  file (not directory) paths by default into array `acc`.  If optional
-  argument `a-fn` is specified, instead accumulate only file paths
-  for which `a-fn` applied to the file path returns a truthy result.
+  file (not directory) paths by default into array `acc`.
+
+  If optional argument `a-fn` is specified, instead accumulate only
+  file paths for which `a-fn` applied to the file path returns a
+  truthy result.
+
+  If optional argument `symlink` is truthy, treat symlinks to
+  directories as directories.  That is, follow symlinks that point to
+  directories and descend into them looking for files.
   ``
-  [path acc &opt a-fn]
+  [path acc &opt a-fn symlink]
   (default a-fn identity)
-  (when (is-dir? path)
+  (default symlink false)
+  (when (is-dir? path symlink)
     (each thing (os/dir path)
       (def thing-path
         (path-join path thing))
@@ -135,16 +141,16 @@
              (a-fn thing-path))
         (array/push acc thing-path)
         #
-        (is-dir? thing-path)
-        (just-files thing-path acc a-fn))))
+        (is-dir? thing-path symlink)
+        (just-files thing-path acc a-fn symlink))))
   acc)
 
 (comment
 
   (def acc @[])
 
-  (just-files (string (os/getenv "HOME")
-                      ".config")
+  (just-files (path-join (os/getenv "HOME")
+                         ".config")
               acc)
 
   )
@@ -152,20 +158,27 @@
 (defn just-dirs
   ``
   Recursively visit directory tree starting at `path`, accumulating
-  directory paths by default into array `acc`.  If optional
-  argument `a-fn` is specified, instead accumulate only directory paths
-  for which `a-fn` applied to the directory path returns a truthy result.
+  directory paths by default into array `acc`.
+
+  If optional argument `a-fn` is specified, instead accumulate only
+  directory paths for which `a-fn` applied to the directory path
+  returns a truthy result.
+
+  If optional argument `symlink` is truthy, treat symlinks to
+  directories as directories.  That is, follow symlinks that point to
+  directories and descend into them looking for directories.
   ``
-  [path acc &opt a-fn]
+  [path acc &opt a-fn symlink]
   (default a-fn identity)
-  (when (is-dir? path)
+  (default symlink false)
+  (when (is-dir? path symlink)
     (each thing (os/dir path)
       (def thing-path
         (path-join path thing))
-      (when (is-dir? thing-path)
+      (when (is-dir? thing-path symlink)
         (when (a-fn thing-path)
           (array/push acc thing-path))
-        (just-dirs thing-path acc a-fn))))
+        (just-dirs thing-path acc a-fn symlink))))
   acc)
 
 (comment
