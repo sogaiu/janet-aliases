@@ -6,84 +6,26 @@ setup and sample invocation
 
   git clone https://github.com/sogaiu/janet-aliases
   cd janet-aliases
-  janet janet-aliases/main.janet .
+  janet aliases.janet data
 
 sample output
 
-  ../janet-zipper/zip-support
-    "s" "./janet-aliases/janet-zipper/usages/zip-support-usages.janet"
-    "s" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/usages/zip-support-usages.janet"
+./common
+  "c" "data/src/prepare.janet"
+  "c" "data/src/link.janet"
+  "c" "data/src/study.janet"
 
-  ../janet-zipper/zipper
-    "z" "./janet-aliases/janet-zipper/usages/zipper-usages.janet"
-    "z" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/usages/zipper-usages.janet"
+./jipper
+  "j" "data/src/study.janet"
+  "j" "data/src/common.janet"
+  "j" "data/src/link.janet"
+  "j" "data/src/prepare.janet"
 
-  ./janet-peg/janet-peg/location
-    "l" "./janet-aliases/janet-location-zipper/loc-jipper/loc-jipper.janet"
-    "l" "./janet-aliases/main.janet"
+./utils
+  "u" "data/src/study.janet"
+  "u" "data/src/common.janet"
+  "u" "data/src/main.janet"
+  "u" "data/src/prepare.janet"
+  "u" "data/src/link.janet"
 
-  ./janet-zipper/janet-zipper/zipper
-    "j" "./janet-aliases/main.janet"
-    "z" "./janet-aliases/janet-location-zipper/loc-jipper/loc-jipper.janet"
-
-  ./loc-jipper
-    "j" "./janet-aliases/janet-location-zipper/loc-jipper/janet-peg/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-location-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-walk-dir/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-peg/juat/janet-usages-as-tests/to-test.janet"
-
-  ./location
-    "l" "./janet-aliases/janet-location-zipper/loc-jipper/janet-peg/juat/janet-usages-as-tests/loc-jipper.janet"
-    "l" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "l" "./janet-aliases/janet-location-zipper/juat/janet-usages-as-tests/loc-jipper.janet"
-    "l" "./janet-aliases/janet-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "l" "./janet-aliases/janet-zipper/juat/janet-usages-as-tests/loc-jipper.janet"
-    "l" "./janet-aliases/janet-location-zipper/loc-jipper/janet-peg/juat/janet-usages-as-tests/to-test.janet"
-    "l" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/juat/janet-usages-as-tests/loc-jipper.janet"
-    "l" "./janet-aliases/janet-walk-dir/juat/janet-usages-as-tests/to-test.janet"
-    "l" "./janet-aliases/janet-walk-dir/juat/janet-usages-as-tests/loc-jipper.janet"
-    "l" "./juat/janet-usages-as-tests/to-test.janet"
-    "l" "./janet-aliases/janet-peg/juat/janet-usages-as-tests/loc-jipper.janet"
-    "l" "./janet-aliases/janet-location-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "l" "./juat/janet-usages-as-tests/loc-jipper.janet"
-    "l" "./janet-aliases/janet-peg/juat/janet-usages-as-tests/to-test.janet"
-
-  ./to-test
-    "t" "./janet-aliases/janet-location-zipper/loc-jipper/janet-peg/juat/janet-usages-as-tests/make-and-run-tests.janet"
-    "t" "./janet-aliases/janet-location-zipper/juat/janet-usages-as-tests/make-and-run-tests.janet"
-    "t" "./janet-aliases/janet-zipper/juat/janet-usages-as-tests/make-and-run-tests.janet"
-    "t" "./janet-aliases/janet-walk-dir/juat/janet-usages-as-tests/make-and-run-tests.janet"
-    "t" "./juat/janet-usages-as-tests/make-and-run-tests.janet"
-    "t" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/juat/janet-usages-as-tests/make-and-run-tests.janet"
-    "t" "./janet-aliases/janet-peg/juat/janet-usages-as-tests/make-and-run-tests.janet"
-
-  ./zip-support
-    "s" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/janet-zipper/zipper.janet"
-    "s" "./janet-aliases/janet-location-zipper/loc-jipper/janet-peg/juat/janet-usages-as-tests/zipper.janet"
-    "s" "./janet-aliases/janet-zipper/janet-zipper/zipper.janet"
-    "s" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/juat/janet-usages-as-tests/zipper.janet"
-    "s" "./janet-aliases/janet-walk-dir/juat/janet-usages-as-tests/zipper.janet"
-    "s" "./juat/janet-usages-as-tests/zipper.janet"
-    "s" "./janet-aliases/janet-location-zipper/juat/janet-usages-as-tests/zipper.janet"
-    "s" "./janet-aliases/janet-peg/juat/janet-usages-as-tests/zipper.janet"
-    "s" "./janet-aliases/janet-zipper/juat/janet-usages-as-tests/zipper.janet"
-
-  ./zipper
-    "j" "./janet-aliases/janet-location-zipper/loc-jipper/janet-peg/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-location-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-peg/juat/janet-usages-as-tests/to-test.janet"
-    "j" "./juat/janet-usages-as-tests/to-test.janet"
-    "j" "./janet-aliases/janet-walk-dir/juat/janet-usages-as-tests/to-test.janet"
-    "z" "./juat/janet-usages-as-tests/loc-jipper.janet"
-    "z" "./janet-aliases/janet-zipper/juat/janet-usages-as-tests/loc-jipper.janet"
-    "z" "./janet-aliases/janet-location-zipper/loc-jipper/janet-zipper/juat/janet-usages-as-tests/loc-jipper.janet"
-    "z" "./janet-aliases/janet-walk-dir/juat/janet-usages-as-tests/loc-jipper.janet"
-    "z" "./janet-aliases/janet-peg/juat/janet-usages-as-tests/loc-jipper.janet"
-    "z" "./janet-aliases/janet-location-zipper/loc-jipper/janet-peg/juat/janet-usages-as-tests/loc-jipper.janet"
-    "z" "./janet-aliases/janet-location-zipper/juat/janet-usages-as-tests/loc-jipper.janet"
 

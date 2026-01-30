@@ -1,0 +1,26 @@
+{:name "janet-aliases"
+ :url "https://github.com/sogaiu/janet-aliases"
+ :repo "git+https://github.com/sogaiu/janet-aliases"
+
+ :vendored
+ [{:name "some-bundle-bits"
+   :url "https://github.com/sogaiu/some-bundle-bits"
+   :tag "7ddb7ec53a6eb8c81b0c22bb7710a01fff57a759"
+   :paths [["sbb.janet" "bundle/"]]}
+  {:name "janet-walk-dir"
+   :url "https://github.com/sogaiu/janet-walk-dir"
+   :tag "4d86322c3be39f5f2e1870e826ced852ac150cd4"
+   :paths [["walk-dir/walk-dir.janet" "src/"]]}
+  {:name "jell"
+   :url "https://github.com/sogaiu/jell"
+   :tag "7eea04a6e54bb7c99052262d9ebe6111633e7382"
+   :paths [["jell" "bin/"]]}
+  {:name "jipper"
+   :url "https://github.com/sogaiu/jipper"
+   :tag "ca38b69517b7e239ef5a326303ffb8af1a048e0c"
+   :paths [["jipper.janet" "src/"]]}
+  {:name "niche"
+   :url "https://github.com/sogaiu/niche"
+   :tag "3f744cfb02b472971f82e78f16a027908a4bd717"
+   :paths [["niche.janet" "bin/"]]}]}
+
