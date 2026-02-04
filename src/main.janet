@@ -1,5 +1,5 @@
+(import ./empathy :as em)
 (import ./jipper :as j)
-(import ./walk-dir :as wd)
 
 (defn collect
   [zloc pred]
@@ -205,10 +205,10 @@
   (assert (= :directory (os/stat root-dir :mode))
           "argument was not a directory path")
   #
-  (def file-paths @[])
-  #
-  (wd/just-files root-dir file-paths
-                 |(when (string/has-suffix? ".janet" $) $))
+  (def file-paths
+    (filter |(and (= :file (os/stat $ :mode))
+                  (string/has-suffix? ".janet" $))
+            (em/itemize root-dir)))
   #
   (def tables @[])
   #

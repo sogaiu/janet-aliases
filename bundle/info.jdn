@@ -7,10 +7,10 @@
    :url "https://github.com/sogaiu/some-bundle-bits"
    :tag "7ddb7ec53a6eb8c81b0c22bb7710a01fff57a759"
    :paths [["sbb.janet" "bundle/"]]}
-  {:name "janet-walk-dir"
-   :url "https://github.com/sogaiu/janet-walk-dir"
-   :tag "4d86322c3be39f5f2e1870e826ced852ac150cd4"
-   :paths [["walk-dir/walk-dir.janet" "src/"]]}
+  {:name "empathy"
+   :url "https://github.com/sogaiu/empathy"
+   :tag "bc8dc194318a466c92ccaa3151290735adce0264"
+   :paths [["empathy.janet" "src/"]]}
   {:name "jell"
    :url "https://github.com/sogaiu/jell"
    :tag "7eea04a6e54bb7c99052262d9ebe6111633e7382"
