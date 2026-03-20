@@ -30,22 +30,22 @@
               [:tuple _ [:symbol _ "import"]]
               true))
   # =>
-  @[[:tuple @{:bc 1 :bl 1 :ec 26 :el 1}
-     [:symbol @{:bc 2 :bl 1 :ec 8 :el 1} "import"]
-     [:whitespace @{:bc 8 :bl 1 :ec 9 :el 1} " "]
-     [:symbol @{:bc 9 :bl 1 :ec 19 :el 1} "./location"]
-     [:whitespace @{:bc 19 :bl 1 :ec 20 :el 1} " "]
-     [:keyword @{:bc 20 :bl 1 :ec 23 :el 1} ":as"]
-     [:whitespace @{:bc 23 :bl 1 :ec 24 :el 1} " "]
-     [:symbol @{:bc 24 :bl 1 :ec 25 :el 1} "l"]]
-    [:tuple @{:bc 1 :bl 5 :ec 24 :el 5}
-     [:symbol @{:bc 2 :bl 5 :ec 8 :el 5} "import"]
-     [:whitespace @{:bc 8 :bl 5 :ec 9 :el 5} " "]
-     [:symbol @{:bc 9 :bl 5 :ec 17 :el 5} "./zipper"]
-     [:whitespace @{:bc 17 :bl 5 :ec 18 :el 5} " "]
-     [:keyword @{:bc 18 :bl 5 :ec 21 :el 5} ":as"]
-     [:whitespace @{:bc 21 :bl 5 :ec 22 :el 5} " "]
-     [:symbol @{:bc 22 :bl 5 :ec 23 :el 5} "z"]]]
+  @[[:tuple @{:bc 1 :bl 1 :bp 0 :ec 26 :el 1 :ep 25}
+     [:symbol @{:bc 2 :bl 1 :bp 1 :ec 8 :el 1 :ep 7} "import"]
+     [:whitespace @{:bc 8 :bl 1 :bp 7 :ec 9 :el 1 :ep 8} " "]
+     [:symbol @{:bc 9 :bl 1 :bp 8 :ec 19 :el 1 :ep 18} "./location"]
+     [:whitespace @{:bc 19 :bl 1 :bp 18 :ec 20 :el 1 :ep 19} " "]
+     [:keyword @{:bc 20 :bl 1 :bp 19 :ec 23 :el 1 :ep 22} ":as"]
+     [:whitespace @{:bc 23 :bl 1 :bp 22 :ec 24 :el 1 :ep 23} " "]
+     [:symbol @{:bc 24 :bl 1 :bp 23 :ec 25 :el 1 :ep 24} "l"]]
+    [:tuple @{:bc 1 :bl 5 :bp 38 :ec 24 :el 5 :ep 61}
+     [:symbol @{:bc 2 :bl 5 :bp 39 :ec 8 :el 5 :ep 45} "import"]
+     [:whitespace @{:bc 8 :bl 5 :bp 45 :ec 9 :el 5 :ep 46} " "]
+     [:symbol @{:bc 9 :bl 5 :bp 46 :ec 17 :el 5 :ep 54} "./zipper"]
+     [:whitespace @{:bc 17 :bl 5 :bp 54 :ec 18 :el 5 :ep 55} " "]
+     [:keyword @{:bc 18 :bl 5 :bp 55 :ec 21 :el 5 :ep 58} ":as"]
+     [:whitespace @{:bc 21 :bl 5 :bp 58 :ec 22 :el 5 :ep 59} " "]
+     [:symbol @{:bc 22 :bl 5 :bp 59 :ec 23 :el 5 :ep 60} "z"]]]
 
   (def src
     `(import freja/default-hotkeys :prefix "" :export true)`)
@@ -56,18 +56,18 @@
               [:tuple _ [:symbol _ "import"]]
               true))
   # =>
-  @[[:tuple @{:bc 1 :bl 1 :ec 55 :el 1}
-     [:symbol @{:bc 2 :bl 1 :ec 8 :el 1} "import"]
-     [:whitespace @{:bc 8 :bl 1 :ec 9 :el 1} " "]
-     [:symbol @{:bc 9 :bl 1 :ec 30 :el 1} "freja/default-hotkeys"]
-     [:whitespace @{:bc 30 :bl 1 :ec 31 :el 1} " "]
-     [:keyword @{:bc 31 :bl 1 :ec 38 :el 1} ":prefix"]
-     [:whitespace @{:bc 38 :bl 1 :ec 39 :el 1} " "]
-     [:string @{:bc 39 :bl 1 :ec 41 :el 1} "\"\""]
-     [:whitespace @{:bc 41 :bl 1 :ec 42 :el 1} " "]
-     [:keyword @{:bc 42 :bl 1 :ec 49 :el 1} ":export"]
-     [:whitespace @{:bc 49 :bl 1 :ec 50 :el 1} " "]
-     [:constant @{:bc 50 :bl 1 :ec 54 :el 1} "true"]]]
+  @[[:tuple @{:bc 1 :bl 1 :bp 0 :ec 55 :el 1 :ep 54}
+     [:symbol @{:bc 2 :bl 1 :bp 1 :ec 8 :el 1 :ep 7} "import"]
+     [:whitespace @{:bc 8 :bl 1 :bp 7 :ec 9 :el 1 :ep 8} " "]
+     [:symbol @{:bc 9 :bl 1 :bp 8 :ec 30 :el 1 :ep 29} "freja/default-hotkeys"]
+     [:whitespace @{:bc 30 :bl 1 :bp 29 :ec 31 :el 1 :ep 30} " "]
+     [:keyword @{:bc 31 :bl 1 :bp 30 :ec 38 :el 1 :ep 37} ":prefix"]
+     [:whitespace @{:bc 38 :bl 1 :bp 37 :ec 39 :el 1 :ep 38} " "]
+     [:string @{:bc 39 :bl 1 :bp 38 :ec 41 :el 1 :ep 40} "\"\""]
+     [:whitespace @{:bc 41 :bl 1 :bp 40 :ec 42 :el 1 :ep 41} " "]
+     [:keyword @{:bc 42 :bl 1 :bp 41 :ec 49 :el 1 :ep 48} ":export"]
+     [:whitespace @{:bc 49 :bl 1 :bp 48 :ec 50 :el 1 :ep 49} " "]
+     [:constant @{:bc 50 :bl 1 :bp 49 :ec 54 :el 1 :ep 53} "true"]]]
 
   )
 
@@ -95,22 +95,22 @@
 
   (collect-imports src)
   # =>
-  @[[:tuple @{:bc 1 :bl 1 :ec 26 :el 1}
-     [:symbol @{:bc 2 :bl 1 :ec 8 :el 1} "import"]
-     [:whitespace @{:bc 8 :bl 1 :ec 9 :el 1} " "]
-     [:symbol @{:bc 9 :bl 1 :ec 19 :el 1} "./location"]
-     [:whitespace @{:bc 19 :bl 1 :ec 20 :el 1} " "]
-     [:keyword @{:bc 20 :bl 1 :ec 23 :el 1} ":as"]
-     [:whitespace @{:bc 23 :bl 1 :ec 24 :el 1} " "]
-     [:symbol @{:bc 24 :bl 1 :ec 25 :el 1} "l"]]
-    [:tuple @{:bc 1 :bl 5 :ec 24 :el 5}
-     [:symbol @{:bc 2 :bl 5 :ec 8 :el 5} "import"]
-     [:whitespace @{:bc 8 :bl 5 :ec 9 :el 5} " "]
-     [:symbol @{:bc 9 :bl 5 :ec 17 :el 5} "./zipper"]
-     [:whitespace @{:bc 17 :bl 5 :ec 18 :el 5} " "]
-     [:keyword @{:bc 18 :bl 5 :ec 21 :el 5} ":as"]
-     [:whitespace @{:bc 21 :bl 5 :ec 22 :el 5} " "]
-     [:symbol @{:bc 22 :bl 5 :ec 23 :el 5} "z"]]]
+  @[[:tuple @{:bc 1 :bl 1 :bp 0 :ec 26 :el 1 :ep 25}
+     [:symbol @{:bc 2 :bl 1 :bp 1 :ec 8 :el 1 :ep 7} "import"]
+     [:whitespace @{:bc 8 :bl 1 :bp 7 :ec 9 :el 1 :ep 8} " "]
+     [:symbol @{:bc 9 :bl 1 :bp 8 :ec 19 :el 1 :ep 18} "./location"]
+     [:whitespace @{:bc 19 :bl 1 :bp 18 :ec 20 :el 1 :ep 19} " "]
+     [:keyword @{:bc 20 :bl 1 :bp 19 :ec 23 :el 1 :ep 22} ":as"]
+     [:whitespace @{:bc 23 :bl 1 :bp 22 :ec 24 :el 1 :ep 23} " "]
+     [:symbol @{:bc 24 :bl 1 :bp 23 :ec 25 :el 1 :ep 24} "l"]]
+    [:tuple @{:bc 1 :bl 5 :bp 38 :ec 24 :el 5 :ep 61}
+     [:symbol @{:bc 2 :bl 5 :bp 39 :ec 8 :el 5 :ep 45} "import"]
+     [:whitespace @{:bc 8 :bl 5 :bp 45 :ec 9 :el 5 :ep 46} " "]
+     [:symbol @{:bc 9 :bl 5 :bp 46 :ec 17 :el 5 :ep 54} "./zipper"]
+     [:whitespace @{:bc 17 :bl 5 :bp 54 :ec 18 :el 5 :ep 55} " "]
+     [:keyword @{:bc 18 :bl 5 :bp 55 :ec 21 :el 5 :ep 58} ":as"]
+     [:whitespace @{:bc 21 :bl 5 :bp 58 :ec 22 :el 5 :ep 59} " "]
+     [:symbol @{:bc 22 :bl 5 :bp 59 :ec 23 :el 5 :ep 60} "z"]]]
 
   )
 

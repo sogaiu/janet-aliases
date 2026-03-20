@@ -128,52 +128,55 @@
 (comment import ./location :prefix "")
 # bl - begin line
 # bc - begin column
+# bp - begin position
 # el - end line
 # ec - end column
+# ep - end position
 (defn l/make-attrs
   [& items]
-  (zipcoll [:bl :bc :el :ec]
+  (zipcoll [:bl :bc :bp :el :ec :ep]
            items))
 
 (defn l/atom-node
   [node-type peg-form]
-  ~(cmt (capture (sequence (line) (column)
+  ~(cmt (capture (sequence (line) (column) (position)
                            ,peg-form
-                           (line) (column)))
+                           (line) (column) (position)))
         ,|[node-type (l/make-attrs ;(slice $& 0 -2)) (last $&)]))
 
 (defn l/reader-macro-node
   [node-type sigil]
-  ~(cmt (capture (sequence (line) (column)
+  ~(cmt (capture (sequence (line) (column) (position)
                            ,sigil
                            (any :non-form)
                            :form
-                           (line) (column)))
-        ,|[node-type (l/make-attrs ;(slice $& 0 2) ;(slice $& -4 -2))
-           ;(slice $& 2 -4)]))
+                           (line) (column) (position)))
+        ,|[node-type (l/make-attrs ;(slice $& 0 3) ;(slice $& -5 -2))
+           ;(slice $& 3 -5)]))
 
 (defn l/collection-node
   [node-type open-delim close-delim]
   ~(cmt
      (capture
        (sequence
-         (line) (column)
+         (line) (column) (position)
          ,open-delim
          (any :input)
          (choice ,close-delim
                  (error
-                   (replace (sequence (line) (column))
+                   (replace (sequence (line) (column) (position))
                             ,|(string/format
-                                "line: %p column: %p missing %p for %p"
-                                $0 $1 close-delim node-type))))
-         (line) (column)))
-     ,|[node-type (l/make-attrs ;(slice $& 0 2) ;(slice $& -4 -2))
-        ;(slice $& 2 -4)]))
+                                (string "line: %p column: %p position: %p "
+                                        "missing %p for %p")
+                                $0 $1 $2 close-delim node-type))))
+         (line) (column) (position)))
+     ,|[node-type (l/make-attrs ;(slice $& 0 3) ;(slice $& -5 -2))
+        ;(slice $& 3 -5)]))
 
 (def l/loc-grammar
-  ~@{:main (sequence (line) (column)
+  ~@{:main (sequence (line) (column) (position)
                      (some :input)
-                     (line) (column))
+                     (line) (column) (position))
      #
      :input (choice :non-form
                     :form)
@@ -327,150 +330,137 @@
 
 (comment
 
-  (get (peg/match l/loc-grammar " ") 2)
+  (get (peg/match l/loc-grammar " ") 3)
   # =>
-  '(:whitespace @{:bc 1 :bl 1 :ec 2 :el 1} " ")
+  [:whitespace @{:bl 1 :el 1 :bc 1 :bp 0 :ec 2 :ep 1} " "]
 
-  (get (peg/match l/loc-grammar "true?") 2)
+  (get (peg/match l/loc-grammar "true?") 3)
   # =>
-  '(:symbol @{:bc 1 :bl 1 :ec 6 :el 1} "true?")
+  [:symbol @{:bl 1 :el 1 :bc 1 :bp 0 :ec 6 :ep 5} "true?"]
 
-  (get (peg/match l/loc-grammar "nil?") 2)
+  (get (peg/match l/loc-grammar "nil?") 3)
   # =>
-  '(:symbol @{:bc 1 :bl 1 :ec 5 :el 1} "nil?")
+  [:symbol @{:bl 1 :el 1 :bc 1 :bp 0 :ec 5 :ep 4} "nil?"]
 
-  (get (peg/match l/loc-grammar "false?") 2)
+  (get (peg/match l/loc-grammar "false?") 3)
   # =>
-  '(:symbol @{:bc 1 :bl 1 :ec 7 :el 1} "false?")
+  [:symbol @{:bl 1 :el 1 :bc 1 :bp 0 :ec 7 :ep 6} "false?"]
 
-  (get (peg/match l/loc-grammar "# hi there") 2)
+  (get (peg/match l/loc-grammar "# hi there") 3)
   # =>
-  '(:comment @{:bc 1 :bl 1 :ec 11 :el 1} "# hi there")
+  [:comment @{:bl 1 :el 1 :bc 1 :bp 0 :ec 11 :ep 10} "# hi there"]
 
-  (get (peg/match l/loc-grammar "1_000_000") 2)
+  (get (peg/match l/loc-grammar "1_000_000") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 10 :el 1} "1_000_000")
+  [:number @{:bl 1 :el 1 :bc 1 :bp 0 :ec 10 :ep 9} "1_000_000"]
 
-  (get (peg/match l/loc-grammar "8.3") 2)
+  (get (peg/match l/loc-grammar "8.3") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 4 :el 1} "8.3")
+  [:number @{:bl 1 :el 1 :bc 1 :bp 0 :ec 4 :ep 3} "8.3"]
 
-  (get (peg/match l/loc-grammar "1e2") 2)
+  (get (peg/match l/loc-grammar "1e2") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 4 :el 1} "1e2")
+  [:number @{:bl 1 :el 1 :bc 1 :ep 3 :bp 0 :ec 4} "1e2"]
 
-  (get (peg/match l/loc-grammar "0xfe") 2)
+  (get (peg/match l/loc-grammar "0xfe") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 5 :el 1} "0xfe")
+  [:number @{:bl 1 :el 1 :bc 1 :ep 4 :bp 0 :ec 5} "0xfe"]
 
-  (get (peg/match l/loc-grammar "2r01") 2)
+  (get (peg/match l/loc-grammar "2r01") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 5 :el 1} "2r01")
+  [:number @{:bl 1 :el 1 :bc 1 :ep 4 :bp 0 :ec 5} "2r01"]
 
-  (get (peg/match l/loc-grammar "3r101&01") 2)
+  (get (peg/match l/loc-grammar "3r101&01") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 9 :el 1} "3r101&01")
+  [:number @{:bl 1 :el 1 :bc 1 :ep 8 :bp 0 :ec 9} "3r101&01"]
 
-  (get (peg/match l/loc-grammar "2:u") 2)
+  (get (peg/match l/loc-grammar "2:u") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 4 :el 1} "2:u")
+  [:number @{:bl 1 :el 1 :bc 1 :ep 3 :bp 0 :ec 4} "2:u"]
 
-  (get (peg/match l/loc-grammar "-8:s") 2)
+  (get (peg/match l/loc-grammar "-8:s") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 5 :el 1} "-8:s")
+  [:number @{:bl 1 :el 1 :bc 1 :ep 4 :bp 0 :ec 5} "-8:s"]
 
-  (get (peg/match l/loc-grammar "1e2:n") 2)
+  (get (peg/match l/loc-grammar "1e2:n") 3)
   # =>
-  '(:number @{:bc 1 :bl 1 :ec 6 :el 1} "1e2:n")
+  [:number @{:bl 1 :el 1 :bc 1 :ep 5 :bp 0 :ec 6} "1e2:n"]
 
-  (get (peg/match l/loc-grammar "printf") 2)
+  (get (peg/match l/loc-grammar "printf") 3)
   # =>
-  '(:symbol @{:bc 1 :bl 1 :ec 7 :el 1} "printf")
+  [:symbol @{:bl 1 :el 1 :bc 1 :ep 6 :bp 0 :ec 7} "printf"]
 
-  (get (peg/match l/loc-grammar ":smile") 2)
+  (get (peg/match l/loc-grammar ":smile") 3)
   # =>
-  '(:keyword @{:bc 1 :bl 1 :ec 7 :el 1} ":smile")
+  [:keyword @{:bl 1 :el 1 :bc 1 :ep 6 :bp 0 :ec 7} ":smile"]
 
-  (get (peg/match l/loc-grammar `"fun"`) 2)
+  (get (peg/match l/loc-grammar `"fun"`) 3)
   # =>
-  '(:string @{:bc 1 :bl 1 :ec 6 :el 1} "\"fun\"")
+  [:string @{:bl 1 :el 1 :bc 1 :ep 5 :bp 0 :ec 6} "\"fun\""]
 
-  (get (peg/match l/loc-grammar "``long-fun``") 2)
+  (get (peg/match l/loc-grammar "``long-fun``") 3)
   # =>
-  '(:long-string @{:bc 1 :bl 1 :ec 13 :el 1} "``long-fun``")
+  [:long-string @{:bl 1 :el 1 :bc 1 :ep 12 :bp 0 :ec 13} "``long-fun``"]
 
-  (get (peg/match l/loc-grammar "@``long-buffer-fun``") 2)
+  (get (peg/match l/loc-grammar "@``long-buffer-fun``") 3)
   # =>
-  '(:long-buffer @{:bc 1 :bl 1 :ec 21 :el 1} "@``long-buffer-fun``")
+  [:long-buffer
+   @{:bl 1 :el 1 :bc 1 :bp 0 :ec 21 :ep 20}
+   "@``long-buffer-fun``"]
 
-  (get (peg/match l/loc-grammar `@"a buffer"`) 2)
+  (get (peg/match l/loc-grammar `@"a buffer"`) 3)
   # =>
-  '(:buffer @{:bc 1 :bl 1 :ec 12 :el 1} "@\"a buffer\"")
+  [:buffer @{:bl 1 :el 1 :bc 1 :ep 11 :bp 0 :ec 12} "@\"a buffer\""]
 
-  (get (peg/match l/loc-grammar "@[8]") 2)
+  (get (peg/match l/loc-grammar "@[8]") 3)
   # =>
-  '(:bracket-array @{:bc 1 :bl 1
-                     :ec 5 :el 1}
-                   (:number @{:bc 3 :bl 1
-                              :ec 4 :el 1} "8"))
+  [:bracket-array @{:bl 1 :el 1 :bc 1 :ep 4 :bp 0 :ec 5}
+   [:number @{:bl 1 :el 1 :bc 3 :ep 3 :bp 2 :ec 4} "8"]]
 
-  (get (peg/match l/loc-grammar "@{:a 1}") 2)
+  (get (peg/match l/loc-grammar "@{:a 1}") 3)
   # =>
-  '(:table @{:bc 1 :bl 1
-             :ec 8 :el 1}
-           (:keyword @{:bc 3 :bl 1
-                       :ec 5 :el 1} ":a")
-           (:whitespace @{:bc 5 :bl 1
-                          :ec 6 :el 1} " ")
-           (:number @{:bc 6 :bl 1
-                      :ec 7 :el 1} "1"))
+  [:table @{:bl 1 :el 1 :bc 1 :ep 7 :bp 0 :ec 8}
+   [:keyword @{:bl 1 :el 1 :bc 3 :ep 4 :bp 2 :ec 5} ":a"]
+   [:whitespace @{:bl 1 :el 1 :bc 5 :ep 5 :bp 4 :ec 6} " "]
+   [:number @{:bl 1 :el 1 :bc 6 :ep 6 :bp 5 :ec 7} "1"]]
 
-  (get (peg/match l/loc-grammar "~x") 2)
+  (get (peg/match l/loc-grammar "~x") 3)
   # =>
-  '(:quasiquote @{:bc 1 :bl 1
-                  :ec 3 :el 1}
-                (:symbol @{:bc 2 :bl 1
-                           :ec 3 :el 1} "x"))
+  [:quasiquote @{:bl 1 :el 1 :bc 1 :ep 2 :bp 0 :ec 3}
+   [:symbol @{:bl 1 :el 1 :bc 2 :ep 2 :bp 1 :ec 3} "x"]]
 
-  (get (peg/match l/loc-grammar "' '[:a :b]") 2)
+  (get (peg/match l/loc-grammar "' '[:a :b]") 3)
   # =>
-  '(:quote @{:bc 1 :bl 1
-             :ec 11 :el 1}
-           (:whitespace @{:bc 2 :bl 1
-                          :ec 3 :el 1} " ")
-           (:quote @{:bc 3 :bl 1
-                     :ec 11 :el 1}
-                   (:bracket-tuple @{:bc 4 :bl 1
-                                     :ec 11 :el 1}
-                                   (:keyword @{:bc 5 :bl 1
-                                               :ec 7 :el 1} ":a")
-                                   (:whitespace @{:bc 7 :bl 1
-                                                  :ec 8 :el 1} " ")
-                                   (:keyword @{:bc 8 :bl 1
-                                               :ec 10 :el 1} ":b"))))
+  [:quote @{:bl 1 :el 1 :bc 1 :ep 10 :bp 0 :ec 11}
+   [:whitespace @{:bl 1 :el 1 :bc 2 :ep 2 :bp 1 :ec 3} " "]
+   [:quote @{:bl 1 :el 1 :bc 3 :ep 10 :bp 2 :ec 11}
+    [:bracket-tuple @{:bl 1 :el 1 :bc 4 :ep 10 :bp 3 :ec 11}
+     [:keyword @{:bl 1 :el 1 :bc 5 :ep 6 :bp 4 :ec 7} ":a"]
+     [:whitespace @{:bl 1 :el 1 :bc 7 :ep 7 :bp 6 :ec 8} " "]
+     [:keyword @{:bl 1 :el 1 :bc 8 :ep 9 :bp 7 :ec 10} ":b"]]]]
 
   )
 
 (def l/loc-top-level-ast
   (put (table ;(kvs l/loc-grammar))
-       :main ~(sequence (line) (column)
+       :main ~(sequence (line) (column) (position)
                         :input
-                        (line) (column))))
+                        (line) (column) (position))))
 
 (defn l/par
   [src &opt start single]
   (default start 0)
   (if single
-    (if-let [[bl bc tree el ec]
+    (if-let [[bl bc bp tree el ec ep]
              (peg/match l/loc-top-level-ast src start)]
-      @[:code (l/make-attrs bl bc el ec) tree]
+      @[:code (l/make-attrs bl bc bp el ec ep) tree]
       @[:code])
     (if-let [captures (peg/match l/loc-grammar src start)]
-      (let [[bl bc] (slice captures 0 2)
-            [el ec] (slice captures -3)
-            trees (array/slice captures 2 -3)]
+      (let [[bl bc bp] (slice captures 0 3)
+            [el ec ep] (slice captures -4)
+            trees (array/slice captures 3 -4)]
         (array/insert trees 0
-                      :code (l/make-attrs bl bc el ec)))
+                      :code (l/make-attrs bl bc bp el ec ep)))
       @[:code])))
 
 # XXX: backward compatibility
@@ -480,20 +470,13 @@
 
   (l/par "(+ 1 1)")
   # =>
-  '@[:code @{:bc 1 :bl 1
-             :ec 8 :el 1}
-     (:tuple @{:bc 1 :bl 1
-               :ec 8 :el 1}
-             (:symbol @{:bc 2 :bl 1
-                        :ec 3 :el 1} "+")
-             (:whitespace @{:bc 3 :bl 1
-                            :ec 4 :el 1} " ")
-             (:number @{:bc 4 :bl 1
-                        :ec 5 :el 1} "1")
-             (:whitespace @{:bc 5 :bl 1
-                            :ec 6 :el 1} " ")
-             (:number @{:bc 6 :bl 1
-                        :ec 7 :el 1} "1"))]
+  @[:code @{:bl 1 :el 1 :bc 1 :ep 7 :bp 0 :ec 8}
+    [:tuple @{:bl 1 :el 1 :bc 1 :ep 7 :bp 0 :ec 8}
+     [:symbol @{:bl 1 :el 1 :bc 2 :ep 2 :bp 1 :ec 3} "+"]
+     [:whitespace @{:bl 1 :el 1 :bc 3 :ep 3 :bp 2 :ec 4} " "]
+     [:number @{:bl 1 :el 1 :bc 4 :ep 4 :bp 3 :ec 5} "1"]
+     [:whitespace @{:bl 1 :el 1 :bc 5 :ep 5 :bp 4 :ec 6} " "]
+     [:number @{:bl 1 :el 1 :bc 6 :ep 6 :bp 5 :ec 7} "1"]]]
 
   )
 
@@ -601,38 +584,34 @@
 
 (comment
 
-  (l/gen
-    [:code])
+  (l/gen [:code])
   # =>
   ""
 
-  (l/gen
-    '(:whitespace @{:bc 1 :bl 1
-                    :ec 2 :el 1} " "))
+  (l/gen [:whitespace @{:bc 1 :bl 1 :bp 0
+                      :ec 2 :el 1 :ep 1} " "])
   # =>
   " "
 
-  (l/gen
-    '(:buffer @{:bc 1 :bl 1
-                :ec 12 :el 1} "@\"a buffer\""))
+  (l/gen [:buffer @{:bc 1 :bl 1 :bp 0
+                  :ec 12 :el 1 :ep 11} "@\"a buffer\""])
   # =>
   `@"a buffer"`
 
-  (l/gen
-    '@[:code @{:bc 1 :bl 1
-               :ec 8 :el 1}
-       (:tuple @{:bc 1 :bl 1
-                 :ec 8 :el 1}
-               (:symbol @{:bc 2 :bl 1
-                          :ec 3 :el 1} "+")
-               (:whitespace @{:bc 3 :bl 1
-                              :ec 4 :el 1} " ")
-               (:number @{:bc 4 :bl 1
-                          :ec 5 :el 1} "1")
-               (:whitespace @{:bc 5 :bl 1
-                              :ec 6 :el 1} " ")
-               (:number @{:bc 6 :bl 1
-                          :ec 7 :el 1} "1"))])
+  (l/gen @[:code @{:bc 1 :bl 1 :bp 0
+                 :ec 8 :el 1 :ep 7}
+         [:tuple @{:bc 1 :bl 1 :bp 0
+                   :ec 8 :el 1 :ep 7}
+                 [:symbol @{:bc 2 :bl 1 :bp 1
+                            :ec 3 :el 1 :ep 2} "+"]
+                 [:whitespace @{:bc 3 :bl 1 :bp 2
+                                :ec 4 :el 1 :ep 3} " "]
+                 [:number @{:bc 4 :bl 1 :bp 3
+                            :ec 5 :el 1 :ep 4} "1"]
+                 [:whitespace @{:bc 5 :bl 1 :bp 4
+                                :ec 6 :el 1 :ep 5} " "]
+                 [:number @{:bc 6 :bl 1 :bp 5
+                            :ec 7 :el 1 :ep 6} "1"]]])
   # =>
   "(+ 1 1)"
 
@@ -662,7 +641,7 @@
   )
 
 
-(def version "2026-03-16_06-41-09")
+(def version "2026-03-19_04-53-23")
 
 # exports
 (def par l/par)
@@ -721,7 +700,7 @@
   (zipper indexed
           indexed?
           h/to-entries
-          (fn [p xs] xs)))
+          (fn [_p xs] xs)))
 
 (comment
 
@@ -1213,7 +1192,7 @@
   root z-location.
   ``
   [zloc]
-  (let [[z-node st] zloc
+  (let [[_z-node st] zloc
         {:ls ls
          :pnodes pnodes
          :pstate pstate
@@ -1834,7 +1813,7 @@
   # because the desired exiting condition for the while loop depends
   # on cur-zloc becoming end-zloc -- if `replace` were to be used
   # there, the termination condition never gets fulfilled properly.
-  (for i 0 (dec (length kids)) # left to right again
+  (repeat (dec (length kids)) # left to right again
     (set cur-zloc
          (-> (replace cur-zloc dummy-node)
              right)))
@@ -1845,7 +1824,7 @@
   #
   (def new-node
     (make-node start-zloc wrap-node (tuple ;kids)))
-  (for i 0 (dec (length kids)) # right to left
+  (repeat (dec (length kids)) # right to left
     (set cur-zloc
          (remove cur-zloc)))
   # 4. put the new container node into place
@@ -1974,7 +1953,7 @@
   ``
   Return the attributes table for the node of a z-location.  The
   attributes table contains at least bounds of the node by 1-based line
-  and column numbers.
+  and column numbers along with 0-based positions.
   ``
   [zloc]
   (get (node zloc) 1))
@@ -1986,7 +1965,7 @@
       down
       attrs)
   # =>
-  @{:bc 1 :bl 1 :ec 8 :el 1}
+  @{:bl 1 :el 1 :bc 1 :ep 7 :bp 0 :ec 8}
 
   )
 
@@ -2005,24 +1984,24 @@
       zip-down
       node)
   # =>
-  [:tuple @{:bc 1 :bl 1 :ec 8 :el 1}
-   [:symbol @{:bc 2 :bl 1 :ec 3 :el 1} "+"]
-   [:whitespace @{:bc 3 :bl 1 :ec 4 :el 1} " "]
-   [:number @{:bc 4 :bl 1 :ec 5 :el 1} "1"]
-   [:whitespace @{:bc 5 :bl 1 :ec 6 :el 1} " "]
-   [:number @{:bc 6 :bl 1 :ec 7 :el 1} "3"]]
+  [:tuple @{:bl 1 :el 1 :bc 1 :ep 7 :bp 0 :ec 8}
+   [:symbol @{:bl 1 :el 1 :bc 2 :ep 2 :bp 1 :ec 3} "+"]
+   [:whitespace @{:bl 1 :el 1 :bc 3 :ep 3 :bp 2 :ec 4} " "]
+   [:number @{:bl 1 :el 1 :bc 4 :ep 4 :bp 3 :ec 5} "1"]
+   [:whitespace @{:bl 1 :el 1 :bc 5 :ep 5 :bp 4 :ec 6} " "]
+   [:number @{:bl 1 :el 1 :bc 6 :ep 6 :bp 5 :ec 7} "3"]]
 
   (-> (par "(/ 1 8)")
       zip-down
       root)
   # =>
-  @[:code @{:bc 1 :bl 1 :ec 8 :el 1}
-    [:tuple @{:bc 1 :bl 1 :ec 8 :el 1}
-     [:symbol @{:bc 2 :bl 1 :ec 3 :el 1} "/"]
-     [:whitespace @{:bc 3 :bl 1 :ec 4 :el 1} " "]
-     [:number @{:bc 4 :bl 1 :ec 5 :el 1} "1"]
-     [:whitespace @{:bc 5 :bl 1 :ec 6 :el 1} " "]
-     [:number @{:bc 6 :bl 1 :ec 7 :el 1} "8"]]]
+  @[:code @{:bl 1 :el 1 :bc 1 :ep 7 :bp 0 :ec 8}
+    [:tuple @{:bl 1 :el 1 :bc 1 :ep 7 :bp 0 :ec 8}
+     [:symbol @{:bl 1 :el 1 :bc 2 :ep 2 :bp 1 :ec 3} "/"]
+     [:whitespace @{:bl 1 :el 1 :bc 3 :ep 3 :bp 2 :ec 4} " "]
+     [:number @{:bl 1 :el 1 :bc 4 :ep 4 :bp 3 :ec 5} "1"]
+     [:whitespace @{:bl 1 :el 1 :bc 5 :ep 5 :bp 4 :ec 6} " "]
+     [:number @{:bl 1 :el 1 :bc 6 :ep 6 :bp 5 :ec 7} "8"]]]
 
   )
 
@@ -2056,7 +2035,7 @@
       right-skip-wsc
       node)
   # =>
-  [:symbol @{:bc 1 :bl 2 :ec 2 :el 2} "+"]
+  [:symbol @{:bl 2 :el 2 :bc 1 :ep 13 :bp 12 :ec 2} "+"]
 
   (-> (par "(:a)")
       zip-down
@@ -2098,7 +2077,7 @@
       left-skip-wsc
       node)
   # =>
-  [:symbol @{:bc 1 :bl 2 :ec 2 :el 2} "+"]
+  [:symbol @{:bl 2 :el 2 :bc 1 :ep 13 :bp 12 :ec 2} "+"]
 
   (-> (par "(:a)")
       zip-down
@@ -2136,7 +2115,7 @@
       right-skip-ws
       node)
   # =>
-  [:comment @{:bc 3 :bl 1 :ec 13 :el 1} "# hi there"]
+  [:comment @{:bl 1 :el 1 :bc 3 :ep 12 :bp 2 :ec 13} "# hi there"]
 
   (-> (par "(:a)")
       zip-down
@@ -2175,7 +2154,7 @@
       left-skip-ws
       node)
   # =>
-  [:comment @{:bc 2 :bl 1 :ec 12 :el 1} "# hi there"]
+  [:comment @{:bl 1 :el 1 :bc 2 :ep 11 :bp 1 :ec 12} "# hi there"]
 
   (-> (par "(:a)")
       zip-down
